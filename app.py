@@ -64,16 +64,17 @@ show_sma50 = st.sidebar.checkbox("SMA 50 (Long-term)")
 # --- Advanced Data Fetching (Pro Solution) ---
 @st.cache_data(ttl=3600)
 def load_data(ticker, period):
-    # استخدام session مع headers لمحاكاة المتصفح وتجنب الحظر (مهم جداً للتقييم)
+    # استخدام session مع headers لمحاكاة المتصفح وتجنب الحظر
     session = requests.Session()
     session.headers.update({
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36'
     })
     
-    # جلب البيانات مع إغلاق الـ MultiIndex لسهولة التعامل مع الأعمدة
+    # جلب البيانات مع استخدام session في download
     data = yf.download(ticker, period=period, session=session, progress=False, multi_level_index=False)
     
-    ticker_obj = yf.Ticker(ticker, session=session)
+    # إزالة session من Ticker بناءً على الطلب لضمان التوافق
+    ticker_obj = yf.Ticker(ticker)
     try:
         info = ticker_obj.info
     except:
@@ -82,7 +83,7 @@ def load_data(ticker, period):
     return data, info
 
 # --- Main Logic ---
-st.title("📊 Stock Market Analysis Pro")
+st.title("📈 Professional Stock Analysis System")
 
 if symbol:
     try:
